@@ -14,9 +14,7 @@ entity timer_one is
         seg1 : out STD_LOGIC_VECTOR(6 downto 0); -- Salida Display 1 (Decenas Seg)
         seg2 : out STD_LOGIC_VECTOR(6 downto 0); -- Salida Display 2 (Minutos)
 
-        dp0 : out STD_LOGIC; -- Punto decimal del Display 0
-        dp1 : out STD_LOGIC; -- Punto decimal del Display 1
-        dp2 : out STD_LOGIC  -- Punto decimal del Display 2
+        dp : out STD_LOGIC  -- Punto decimal del Display 2
     );
 end timer_one; 
 
@@ -92,10 +90,8 @@ begin -- Inicio de la arquitectura
         seg => seg2 -- Envía el patrón al puerto físico seg2
     );
 
-    -- CONFIGURACIÓN DE PUNTOS DECIMALES
+    -- CONFIGURACIÓN DEL PUNTO DECIMAL
 
-    dp0 <= '1'; -- El punto del display 0 se mantiene apagado
-    dp1 <= '1'; -- El punto del display 1 se mantiene apagado
-    dp2 <= '0'; -- El punto del display 2 se enciende (divisor minutos/segundos)
+    dp <= '0'; -- El punto del display 2 se enciende (divisor minutos/segundos)
 
 end architecture arch_timer; -- Fin de la arquitectura
