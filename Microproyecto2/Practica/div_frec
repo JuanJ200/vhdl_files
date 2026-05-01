@@ -1,0 +1,41 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity div_frec is
+    port(
+        clk_in  : in  std_logic;
+        rst     : in  std_logic;
+        clk_out : out std_logic
+    );
+end;
+
+architecture rtl of div_frec is
+
+  
+    signal cont : unsigned(21 downto 0) := (others => '0'); 
+    signal clk_div : std_logic := '0';
+
+begin
+
+    process(clk_in, rst)
+    begin
+   
+        if rst = '0' then
+            cont <= (others => '0');
+            clk_div <= '0';
+
+        elsif rising_edge(clk_in) then
+            cont <= cont + 1;
+
+           
+            if cont = 50_000_000 then
+                clk_div <= not clk_div;
+                cont <= (others => '0');
+            end if;
+        end if;
+    end process;
+
+    clk_out <= clk_div;
+
+end rtl;
