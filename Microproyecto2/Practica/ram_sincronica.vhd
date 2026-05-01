@@ -15,18 +15,25 @@ entity ram_sincrona is
 end;
 
 architecture rtl of ram_sincrona is
+
     type ram_array is array (0 to DEPTH-1) of std_logic_vector(DW-1 downto 0);
     signal RAM : ram_array := (others => (others => '0'));
+
 begin
+
     process(clk)
     begin
         if rising_edge(clk) then
+
             if wr_en = '1' then
                 RAM(to_integer(unsigned(addr))) <= data_in;
             end if;
+
             if rd_en = '1' then
                 data_out <= RAM(to_integer(unsigned(addr)));
             end if;
+
         end if;
     end process;
+
 end rtl;
