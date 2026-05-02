@@ -1,4 +1,8 @@
-library IEEE; use IEEE.STD_LOGIC_1164.ALL; use work.pkg_mem.all; use IEEE.NUMERIC_STD.ALL;
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use work.pkg_mem.all; 
+use IEEE.NUMERIC_STD.ALL;
+
 entity control_memorias is
     port(clk, rst: in std_logic; seg_u, seg_d, seg_c: out std_logic_vector(6 downto 0));
 end entity;
