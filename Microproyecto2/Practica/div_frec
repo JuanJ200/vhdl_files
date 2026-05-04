@@ -1,38 +1,51 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+library IEEE; -- Se importa la librería estándar IEEE
+use IEEE.STD_LOGIC_1164.ALL; -- Permite usar señales digitales como std_logic
+use IEEE.NUMERIC_STD.ALL; -- Permite realizar operaciones aritméticas con el tipo unsigned
 
+-- ENTIDAD DEL DIVISOR DE FRECUENCIA (Define la interfaz para reducir la velocidad del reloj)
+-- Este módulo toma un reloj rápido y genera uno más lento para que los cambios sean visibles
 entity div_frec is
     port(
-        clk_in  : in  std_logic;
-        rst     : in  std_logic;
-        clk_out : out std_logic
+        clk_in  : in  std_logic; -- Entrada: Reloj maestro de la FPGA (ej. 50 MHz)
+        rst     : in  std_logic; -- Entrada: Reset general del sistema (0=pulsado, 1=libre)
+        clk_out : out std_logic  -- Salida: Reloj dividido (frecuencia reducida)
     );
-end;
+end entity;
 
+-- ARQUITECTURA (Define la lógica del contador y el cambio de estado)
 architecture rtl of div_frec is
 
-    signal cont : unsigned(22 downto 0) := (others => '0');
-    signal clk_div : std_logic := '0';
+    -- SEÑALES INTERNAS
+    signal cont : unsigned(22 downto 0) := (others => '0'); -- Contador de 23 bits para alcanzar valores altos
+    signal clk_div : std_logic := '0';                      -- Registro interno para el nuevo reloj
 
 begin
 
+    -- PROCESO DE DIVISIÓN
+    -- Se encarga de contar ciclos de clk_in y conmutar la salida al llegar al límite
     process(clk_in, rst)
     begin
+        -- CONDICIÓN DE RESET ASÍNCRONO
+        -- Si se activa el reset (rst=0), el contador y el reloj dividido vuelven a cero
         if rst = '0' then
-            cont <= (others => '0');
-            clk_div <= '0';
+            cont <= (others => '0'); -- Reinicia el contador a cero
+            clk_div <= '0';          -- Reinicia el estado del reloj a bajo
 
+        -- OPERACIÓN SÍNCRONA: Ocurre en cada flanco de subida del reloj de entrada
         elsif rising_edge(clk_in) then
-            cont <= cont + 1;
+            cont <= cont + 1; -- Incrementa el contador en cada ciclo de reloj
 
+            -- COMPARACIÓN DEL LÍMITE
+            -- Al llegar a 7,000,000, el reloj de salida cambia su estado (de 0 a 1 o de 1 a 0)
             if cont = 7_000_000 then
-                clk_div <= not clk_div;
-                cont <= (others => '0');
+                clk_div <= not clk_div; -- Invierte el estado actual del reloj (toggle)
+                cont <= (others => '0'); -- Reinicia el contador para el siguiente ciclo
             end if;
         end if;
     end process;
 
+    -- ASIGNACIÓN FINAL
+    -- Se conecta el registro interno clk_div directamente al puerto de salida clk_out
     clk_out <= clk_div;
 
-end rtl;
+end architecture; -- Fin de la lógica rtl
